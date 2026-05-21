@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import {
   GraduationCap, Users, CreditCard, BarChart3, Shield,
-  BookOpen, ArrowRight, Menu, X, ChevronRight, Star,
+  BookOpen, ArrowRight, Menu, X, Star,
   CheckCircle2, Phone, Mail, MapPin, Clock
 } from 'lucide-react'
 
@@ -13,7 +13,10 @@ export default function LandingPage() {
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
-  const { signIn, demoLogin } = useAuth()
+  const [resetMode, setResetMode] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
+  const { signIn, resetPassword } = useAuth()
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
@@ -22,7 +25,13 @@ export default function LandingPage() {
     catch (err) { setLoginError(err.message || 'Error al iniciar sesión') }
     finally { setLoginLoading(false) }
   }
-  const handleDemo = (role) => { demoLogin(role); navigate('/dashboard') }
+
+  const handleReset = async (e) => {
+    e.preventDefault(); setLoginError(''); setResetLoading(true)
+    try { await resetPassword(email); setResetSent(true) }
+    catch (err) { setLoginError(err.message || 'Error al enviar correo') }
+    finally { setResetLoading(false) }
+  }
 
   const features = [
     { icon: Users, title: 'Gestión de Estudiantes', desc: 'Registro completo, historial académico, y seguimiento de más de 900 estudiantes desde Maternal hasta 8vo grado.' },
@@ -195,37 +204,58 @@ export default function LandingPage() {
               <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>Bienvenido</h2>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Inicia sesión para acceder al sistema</p>
             </div>
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Correo Electrónico</label>
-                <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com" required />
-              </div>
-              <div>
-                <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Contraseña</label>
-                <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
-              </div>
-              {loginError && <div style={{ padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'var(--danger-light)', color: 'var(--danger)', fontSize: 13 }}>{loginError}</div>}
-              <button className="btn btn-primary" type="submit" disabled={loginLoading} style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}>
-                {loginLoading ? 'Ingresando...' : 'Iniciar Sesión'}
-              </button>
-            </form>
-            <div style={{ margin: '24px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-              <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontWeight: 500 }}>MODO DEMO</span>
-              <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              {[
-                { role: 'admin', label: 'Admin', color: '#4f46e5' },
-                { role: 'secretary', label: 'Secretaria', color: '#0891b2' },
-                { role: 'teacher', label: 'Profesor', color: '#059669' },
-                { role: 'parent', label: 'Padre', color: '#d97706' },
-              ].map(d => (
-                <button key={d.role} className="btn btn-secondary btn-sm" onClick={() => handleDemo(d.role)} style={{ justifyContent: 'center', fontSize: 13 }}>
-                  <ChevronRight size={14} color={d.color} /> {d.label}
+            {resetMode ? (
+              resetSent ? (
+                <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--success-light, #ecfdf5)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                    <Mail size={24} color="var(--success, #059669)" />
+                  </div>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    Se envió un enlace de recuperación a <strong>{email}</strong>. Revisa tu correo y sigue las instrucciones.
+                  </p>
+                  <button className="btn btn-secondary" onClick={() => { setResetMode(false); setResetSent(false) }} style={{ width: '100%', justifyContent: 'center', marginTop: 20 }}>
+                    Volver a Iniciar Sesión
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+                  </p>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Correo Electrónico</label>
+                    <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com" required />
+                  </div>
+                  {loginError && <div style={{ padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'var(--danger-light)', color: 'var(--danger)', fontSize: 13 }}>{loginError}</div>}
+                  <button className="btn btn-primary" type="submit" disabled={resetLoading} style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}>
+                    {resetLoading ? 'Enviando...' : 'Enviar Enlace'}
+                  </button>
+                  <button type="button" onClick={() => { setResetMode(false); setLoginError('') }} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 13, fontWeight: 500, cursor: 'pointer', marginTop: 4 }}>
+                    ← Volver a Iniciar Sesión
+                  </button>
+                </form>
+              )
+            ) : (
+              <>
+                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Correo Electrónico</label>
+                    <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com" required />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Contraseña</label>
+                    <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+                  </div>
+                  {loginError && <div style={{ padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'var(--danger-light)', color: 'var(--danger)', fontSize: 13 }}>{loginError}</div>}
+                  <button className="btn btn-primary" type="submit" disabled={loginLoading} style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}>
+                    {loginLoading ? 'Ingresando...' : 'Iniciar Sesión'}
+                  </button>
+                </form>
+                <button type="button" onClick={() => { setResetMode(true); setLoginError('') }} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 13, fontWeight: 500, cursor: 'pointer', marginTop: 16, width: '100%', textAlign: 'center' }}>
+                  ¿Olvidaste tu contraseña?
                 </button>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         </div>
       )}
