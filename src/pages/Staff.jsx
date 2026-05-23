@@ -13,7 +13,7 @@ export default function Staff() {
     setLoading(true)
     let query = supabase
       .from('staff')
-      .select('id, first_name, last_name, email, phone, hire_date, is_active, staff_roles(name_es)')
+      .select('id, first_name, last_name, email, phone, hire_date, status, staff_roles:staff_roles!role_id(name_es)')
       .order('last_name')
 
     if (search) {
@@ -52,10 +52,10 @@ export default function Staff() {
           >
             <div style={{
               width: 44, height: 44, borderRadius: 10,
-              background: s.is_active ? '#ecfdf5' : '#fef2f2',
+              background: s.status === 'active' ? '#ecfdf5' : '#fef2f2',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
             }}>
-              <UserCog size={20} color={s.is_active ? '#059669' : '#dc2626'} />
+              <UserCog size={20} color={s.status === 'active' ? '#059669' : '#dc2626'} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 14, fontWeight: 600 }}>{s.first_name} {s.last_name}</div>
@@ -66,8 +66,8 @@ export default function Staff() {
                 {s.email || s.phone || 'Sin contacto'}
               </div>
             </div>
-            <span className={`badge ${s.is_active ? 'badge-success' : 'badge-danger'}`}>
-              {s.is_active ? 'Activo' : 'Inactivo'}
+            <span className={`badge ${s.status === 'active' ? 'badge-success' : 'badge-danger'}`}>
+              {s.status === 'active' ? 'Activo' : 'Inactivo'}
             </span>
           </div>
         ))}
