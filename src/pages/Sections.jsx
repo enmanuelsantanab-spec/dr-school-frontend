@@ -13,7 +13,7 @@ export default function Sections() {
     setLoading(true)
     const { data } = await supabase
       .from('sections')
-      .select('id, name, max_capacity, grade_levels(name_es, code), school_years(name)')
+      .select('id, name, max_capacity, grade_levels(name_es, code), school_years(label)')
       .order('name')
 
     let results = data || []
@@ -63,7 +63,7 @@ export default function Sections() {
                   <div style={{ fontSize: 18, fontWeight: 700 }}>{s.name}</div>
                   <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{s.grade_levels?.name_es}</div>
                 </div>
-                <span className="badge badge-info" style={{ fontSize: 11 }}>{s.school_years?.name || '—'}</span>
+                <span className="badge badge-info" style={{ fontSize: 11 }}>{s.school_years?.label || '—'}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <Users size={14} color="var(--text-tertiary)" />
