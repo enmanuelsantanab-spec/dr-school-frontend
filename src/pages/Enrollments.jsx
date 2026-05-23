@@ -16,7 +16,7 @@ export default function Enrollments() {
     setLoading(true)
     let query = supabase
       .from('enrollments')
-      .select('id, enrolled_at, students(first_name, last_name, student_code), sections(name, grade_levels(name_es)), school_years(name)', { count: 'exact' })
+      .select('id, enrolled_at, students(first_name, last_name, student_code), sections(name, grade_levels(name_es)), school_years(label)', { count: 'exact' })
       .order('enrolled_at', { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1)
 
@@ -76,7 +76,7 @@ export default function Enrollments() {
                   <td style={{ padding: '12px 16px', color: 'var(--text-secondary)', fontVariantNumeric: 'tabular-nums' }}>{e.students?.student_code}</td>
                   <td style={{ padding: '12px 16px' }}><span className="badge badge-info">{e.sections?.name || '—'}</span></td>
                   <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>{e.sections?.grade_levels?.name_es || '—'}</td>
-                  <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>{e.school_years?.name || '—'}</td>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>{e.school_years?.label || '—'}</td>
                   <td style={{ padding: '12px 16px', color: 'var(--text-tertiary)' }}>
                     {e.enrolled_at ? new Date(e.enrolled_at).toLocaleDateString('es-DO') : '—'}
                   </td>
