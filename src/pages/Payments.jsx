@@ -16,23 +16,27 @@ export default function Payments() {
   useEffect(() => { loadStats() }, [])
 
   async function loadStats() {
-    const { data } = await supabase.from('invoices').select('status, total_amount')
-    if (data) {
-      const s = { pending: 0, paid: 0, overdue: 0, totalDue: 0 }
-      data.forEach(inv => {
-        if (inv.status === 'paid') s.paid++
-        else if (inv.status === 'overdue') { s.overdue++; s.totalDue += Number(inv.total_amount) || 0 }
-        else if (inv.status === 'pending' || inv.status === 'partial') { s.pending++; s.totalDue += Number(inv.total_amount) || 0 }
-      })
-      setStats(s)
-    }
+    const [pendingRes, paidRes, overdueRes, partialRes] = await Promise.all([
+      supabase.from('invoices').select('total_amount', { count: 'exact' }).in('status', ['pending', 'partial']),
+      supabase.from('invoices').select('id', { count: 'exact', head: true }).eq('status', 'paid'),
+      supabase.from('invoices').select('total_amount', { count: 'exact' }).eq('status', 'overdue'),
+      supabase.from('invoices').select('total_amount', { count: 'exact' }).eq('status', 'partial'),
+    ])
+    const pendingDue = (pendingRes.data || []).reduce((s, i) => s + Number(i.total_amount || 0), 0)
+    const overdueDue = (overdueRes.data || []).reduce((s, i) => s + Number(i.total_amount || 0), 0)
+    setStats({
+      pending: pendingRes.count || 0,
+      paid: paidRes.count || 0,
+      overdue: overdueRes.count || 0,
+      totalDue: pendingDue + overdueDue,
+    })
   }
 
   async function loadInvoices() {
     setLoading(true)
     let query = supabase
       .from('invoices')
-      .select('id, invoice_number, total_amount, status, issued_date, due_date, description, students(first_name, last_name)', { count: 'exact' })
+      .select('id, invoice_number, total_amount, status, issued_date, due_date, concept, students(first_name, last_name)', { count: 'exact' })
       .order('issued_date', { ascending: false })
       .range(page * pageSize, (page + 1) * pageSize - 1)
 
