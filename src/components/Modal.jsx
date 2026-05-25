@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
 export default function Modal({ open, onClose, title, width = 540, footer, children }) {
@@ -10,9 +11,9 @@ export default function Modal({ open, onClose, title, width = 540, footer, child
 
   if (!open) return null
 
-  return (
+  return createPortal(
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 200,
+      position: 'fixed', inset: 0, zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 16,
     }}>
@@ -86,6 +87,7 @@ export default function Modal({ open, onClose, title, width = 540, footer, child
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes modalSlideUp { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
       `}</style>
-    </div>
+    </div>,
+    document.body
   )
 }
