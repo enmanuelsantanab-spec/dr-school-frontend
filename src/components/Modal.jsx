@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
 
-export default function Modal({ open, onClose, title, width = 540, children }) {
+export default function Modal({ open, onClose, title, width = 540, footer, children }) {
   useEffect(() => {
     if (open) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -67,6 +67,19 @@ export default function Modal({ open, onClose, title, width = 540, children }) {
         <div style={{ overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
+
+        {/* Sticky Footer */}
+        {footer && (
+          <div style={{
+            padding: '16px 24px',
+            borderTop: '1px solid var(--border)',
+            background: 'var(--bg-card)',
+            flexShrink: 0,
+            display: 'flex', justifyContent: 'flex-end', gap: 10,
+          }}>
+            {footer}
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -75,4 +88,4 @@ export default function Modal({ open, onClose, title, width = 540, children }) {
       `}</style>
     </div>
   )
-    }
+        }
