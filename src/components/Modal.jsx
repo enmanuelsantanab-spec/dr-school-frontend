@@ -64,7 +64,7 @@ export default function Modal({ open, onClose, title, width = 540, footer, child
         </div>
 
         {/* Body (scrollable) */}
-        <div style={{ overflowY: 'auto', flex: 1 }}>
+        <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           {children}
         </div>
 
@@ -88,4 +88,4 @@ export default function Modal({ open, onClose, title, width = 540, footer, child
       `}</style>
     </div>
   )
-        }
+}
