@@ -30,8 +30,8 @@ const RELATIONSHIPS = [
   { value: 'father', label: 'Padre' },
   { value: 'grandmother', label: 'Abuela' },
   { value: 'grandfather', label: 'Abuelo' },
-  { value: 'uncle', label: 'T\u00edo' },
-  { value: 'aunt', label: 'T\u00eda' },
+  { value: 'uncle', label: 'Tío' },
+  { value: 'aunt', label: 'Tía' },
   { value: 'sibling', label: 'Hermano/a' },
   { value: 'legal_guardian', label: 'Tutor Legal' },
   { value: 'other', label: 'Otro' },
@@ -121,7 +121,7 @@ function DatePicker({ value, onChange, selectStyle }) {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr', gap: 6 }}>
       <select style={selectStyle} value={day}
         onChange={e => update(year, month, e.target.value)}>
-        <option value="">D\u00eda</option>
+        <option value="">Día</option>
         {days.map(d => <option key={d} value={String(d).padStart(2, '0')}>{d}</option>)}
       </select>
       <select style={selectStyle} value={month}
@@ -131,7 +131,7 @@ function DatePicker({ value, onChange, selectStyle }) {
       </select>
       <select style={selectStyle} value={year}
         onChange={e => update(e.target.value, month, day)}>
-        <option value="">A\u00f1o</option>
+        <option value="">Año</option>
         {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
       </select>
     </div>
@@ -280,7 +280,7 @@ export default function Students() {
   }
 
   const totalPages = Math.ceil(total / pageSize)
-  const gradeName = (id) => GRADE_LEVELS.find(g => g.id === id)?.name || '\u2014'
+  const gradeName = (id) => GRADE_LEVELS.find(g => g.id === id)?.name || '—'
   const statusBadge = (s) => {
     const map = { active: 'badge-success', inactive: 'badge-warning', graduated: 'badge-info', transferred: 'badge-danger', withdrawn: 'badge-danger' }
     return <span className={`badge ${map[s] || 'badge-info'}`}>{STATUS_LABELS[s] || s}</span>
@@ -298,7 +298,7 @@ export default function Students() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <div style={{ position: 'relative', width: 260 }}>
             <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-            <input className="input" placeholder="Buscar por nombre o c\u00f3digo..." value={search} onChange={e => { setSearch(e.target.value); setPage(0) }} style={{ paddingLeft: 36, fontSize: 13, height: 40 }} />
+            <input className="input" placeholder="Buscar por nombre o código..." value={search} onChange={e => { setSearch(e.target.value); setPage(0) }} style={{ paddingLeft: 36, fontSize: 13, height: 40 }} />
           </div>
           <button className="btn btn-primary" onClick={openAddStudent} style={{ height: 40 }}><Plus size={18} /> Agregar</button>
         </div>
@@ -309,7 +309,7 @@ export default function Students() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                {['Nombre', 'C\u00f3digo', 'Grado', 'G\u00e9nero', 'Nacimiento', 'Estado', ''].map(h => (
+                {['Nombre', 'Código', 'Grado', 'Género', 'Nacimiento', 'Estado', ''].map(h => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 500, color: 'var(--text-tertiary)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em', background: 'var(--bg-secondary)' }}>{h}</th>
                 ))}
               </tr>
@@ -329,10 +329,10 @@ export default function Students() {
                       <span style={{ fontWeight: 500 }}>{s.first_name} {s.last_name}</span>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 16px', fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{s.student_code || '\u2014'}</td>
+                  <td style={{ padding: '12px 16px', fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{s.student_code || '—'}</td>
                   <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{gradeName(s.current_grade_level_id)}</td>
                   <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{s.gender === 'M' ? 'Masculino' : 'Femenino'}</td>
-                  <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{s.date_of_birth ? new Date(s.date_of_birth + 'T00:00:00').toLocaleDateString('es-DO') : '\u2014'}</td>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }} onClick={() => openDetail(s)}>{s.date_of_birth ? new Date(s.date_of_birth + 'T00:00:00').toLocaleDateString('es-DO') : '—'}</td>
                   <td style={{ padding: '12px 16px' }} onClick={() => openDetail(s)}>{statusBadge(s.enrollment_status)}</td>
                   <td style={{ padding: '12px 16px' }}><button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); openEditStudent(s) }} title="Editar" style={{ padding: 6 }}><Pencil size={15} /></button></td>
                 </tr>
@@ -342,7 +342,7 @@ export default function Students() {
         </div>
         {totalPages > 1 && (
           <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, color: 'var(--text-secondary)' }}>
-            <span>P\u00e1gina {page + 1} de {totalPages}</span>
+            <span>Página {page + 1} de {totalPages}</span>
             <div style={{ display: 'flex', gap: 4 }}>
               <button className="btn btn-secondary btn-sm" disabled={page === 0} onClick={() => setPage(p => p - 1)}><ChevronLeft size={16} /></button>
               <button className="btn btn-secondary btn-sm" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}><ChevronRight size={16} /></button>
@@ -368,19 +368,19 @@ export default function Students() {
                 <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={24} color="var(--accent)" /></div>
                 <div>
                   <div style={{ fontSize: 18, fontWeight: 600 }}>{selected.first_name} {selected.last_name}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{selected.student_code || 'Sin c\u00f3digo'}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{selected.student_code || 'Sin código'}</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 28 }}>
                 {[
-                  { label: 'G\u00e9nero', value: selected.gender === 'M' ? 'Masculino' : 'Femenino' },
-                  { label: 'Nacimiento', value: selected.date_of_birth ? new Date(selected.date_of_birth + 'T00:00:00').toLocaleDateString('es-DO') : '\u2014' },
-                  { label: 'Nacionalidad', value: selected.nationality || '\u2014' },
+                  { label: 'Género', value: selected.gender === 'M' ? 'Masculino' : 'Femenino' },
+                  { label: 'Nacimiento', value: selected.date_of_birth ? new Date(selected.date_of_birth + 'T00:00:00').toLocaleDateString('es-DO') : '—' },
+                  { label: 'Nacionalidad', value: selected.nationality || '—' },
                   { label: 'Estado', value: STATUS_LABELS[selected.enrollment_status] || selected.enrollment_status },
                   { label: 'Grado', value: gradeName(selected.current_grade_level_id) },
-                  { label: 'Tel\u00e9fono', value: selected.phone || '\u2014' },
-                  { label: 'Email', value: selected.email || '\u2014' },
-                  { label: 'Direcci\u00f3n', value: [selected.address, selected.city, selected.province].filter(Boolean).join(', ') || '\u2014' },
+                  { label: 'Teléfono', value: selected.phone || '—' },
+                  { label: 'Email', value: selected.email || '—' },
+                  { label: 'Dirección', value: [selected.address, selected.city, selected.province].filter(Boolean).join(', ') || '—' },
                 ].map((f, i) => (
                   <div key={i}>
                     <div style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>{f.label}</div>
@@ -390,7 +390,7 @@ export default function Students() {
               </div>
               {selected.medical_notes && (
                 <div style={{ marginBottom: 24, padding: 14, background: 'var(--warning-light)', borderRadius: 'var(--radius-md)', border: '1px solid var(--warning)' }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--warning)', marginBottom: 4 }}>Notas M\u00e9dicas</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--warning)', marginBottom: 4 }}>Notas Médicas</div>
                   <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>{selected.medical_notes}</div>
                 </div>
               )}
@@ -410,10 +410,10 @@ export default function Students() {
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>
                         {RELATIONSHIPS.find(r => r.value === g.relationship)?.label || g.relationship}
-                        {g.guardians?.phone_primary && ` \u2022 ${g.guardians.phone_primary}`}
-                        {g.guardians?.email && ` \u2022 ${g.guardians.email}`}
+                        {g.guardians?.phone_primary && ` • ${g.guardians.phone_primary}`}
+                        {g.guardians?.email && ` • ${g.guardians.email}`}
                       </div>
-                      {g.guardians?.cedula && <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>C\u00e9dula: {g.guardians.cedula}</div>}
+                      {g.guardians?.cedula && <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>Cédula: {g.guardians.cedula}</div>}
                     </div>
                     <div style={{ display: 'flex', gap: 2 }}>
                       <button className="btn btn-ghost btn-sm" onClick={() => openEditGuardian(g)} style={{ padding: 4 }} title="Editar"><Pencil size={14} /></button>
@@ -437,9 +437,9 @@ export default function Students() {
                   <button className="btn btn-sm" onClick={() => setDeleteConfirm(true)} style={{ background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', fontSize: 12 }}><Trash2 size={14} /> Eliminar Estudiante</button>
                 ) : (
                   <div style={{ padding: 14, background: 'var(--danger-light)', borderRadius: 'var(--radius-md)', border: '1px solid var(--danger)' }}>
-                    <p style={{ fontSize: 13, color: 'var(--danger)', fontWeight: 500, marginBottom: 10 }}>\u00bfEst\u00e1s seguro? Esta acci\u00f3n ocultar\u00e1 al estudiante de todas las listas.</p>
+                    <p style={{ fontSize: 13, color: 'var(--danger)', fontWeight: 500, marginBottom: 10 }}>¿Estás seguro? Esta acción ocultará al estudiante de todas las listas.</p>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <button className="btn btn-danger btn-sm" onClick={deleteStudent} disabled={deleting}>{deleting ? 'Eliminando...' : 'S\u00ed, eliminar'}</button>
+                      <button className="btn btn-danger btn-sm" onClick={deleteStudent} disabled={deleting}>{deleting ? 'Eliminando...' : 'Sí, eliminar'}</button>
                       <button className="btn btn-secondary btn-sm" onClick={() => setDeleteConfirm(false)}>Cancelar</button>
                     </div>
                   </div>
@@ -462,24 +462,24 @@ export default function Students() {
         <div style={{ padding: 24 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <Field label="Nombre" required><input style={inputStyle} value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} placeholder="Ej: Juan" /></Field>
-            <Field label="Apellido" required><input style={inputStyle} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} placeholder="Ej: P\u00e9rez" /></Field>
+            <Field label="Apellido" required><input style={inputStyle} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} placeholder="Ej: Pérez" /></Field>
             <Field label="Fecha de Nacimiento" required>
               <DatePicker value={form.date_of_birth} selectStyle={selectStyle} onChange={v => setForm({ ...form, date_of_birth: v })} />
             </Field>
-            <Field label="G\u00e9nero" required><select style={selectStyle} value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}><option value="M">Masculino</option><option value="F">Femenino</option></select></Field>
-            <Field label="C\u00f3digo de Estudiante"><input style={inputStyle} value={form.student_code} onChange={e => setForm({ ...form, student_code: e.target.value })} placeholder="Ej: EST-001" /></Field>
+            <Field label="Género" required><select style={selectStyle} value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}><option value="M">Masculino</option><option value="F">Femenino</option></select></Field>
+            <Field label="Código de Estudiante"><input style={inputStyle} value={form.student_code} onChange={e => setForm({ ...form, student_code: e.target.value })} placeholder="Ej: EST-001" /></Field>
             <Field label="Nacionalidad"><input style={inputStyle} value={form.nationality} onChange={e => setForm({ ...form, nationality: e.target.value })} /></Field>
-            <Field label="Grado Actual"><select style={selectStyle} value={form.current_grade_level_id} onChange={e => setForm({ ...form, current_grade_level_id: e.target.value })}><option value="">\u2014 Seleccionar \u2014</option>{GRADE_LEVELS.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
+            <Field label="Grado Actual"><select style={selectStyle} value={form.current_grade_level_id} onChange={e => setForm({ ...form, current_grade_level_id: e.target.value })}><option value="">— Seleccionar —</option>{GRADE_LEVELS.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
             <Field label="Estado"><select style={selectStyle} value={form.enrollment_status} onChange={e => setForm({ ...form, enrollment_status: e.target.value })}>{Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field>
             <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--border)', paddingTop: 16, marginTop: 4 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>Direcci\u00f3n y Contacto</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>Dirección y Contacto</div>
             </div>
-            <Field label="Direcci\u00f3n" span={2}><input style={inputStyle} value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Calle, n\u00famero..." /></Field>
+            <Field label="Dirección" span={2}><input style={inputStyle} value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Calle, número..." /></Field>
             <Field label="Ciudad"><input style={inputStyle} value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} placeholder="Ej: Santo Domingo" /></Field>
             <Field label="Provincia"><input style={inputStyle} value={form.province} onChange={e => setForm({ ...form, province: e.target.value })} placeholder="Ej: Distrito Nacional" /></Field>
-            <Field label="Tel\u00e9fono"><input style={inputStyle} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="809-000-0000" /></Field>
+            <Field label="Teléfono"><input style={inputStyle} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="809-000-0000" /></Field>
             <Field label="Email"><input style={inputStyle} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="correo@ejemplo.com" /></Field>
-            <Field label="Notas M\u00e9dicas" span={2}><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={form.medical_notes} onChange={e => setForm({ ...form, medical_notes: e.target.value })} placeholder="Alergias, condiciones, medicamentos..." /></Field>
+            <Field label="Notas Médicas" span={2}><textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} value={form.medical_notes} onChange={e => setForm({ ...form, medical_notes: e.target.value })} placeholder="Alergias, condiciones, medicamentos..." /></Field>
           </div>
         </div>
       </Modal>
@@ -494,17 +494,17 @@ export default function Students() {
         </>}>
         <div style={{ padding: 24 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <Field label="Nombre" required><input style={inputStyle} value={guardianForm.first_name} onChange={e => setGuardianForm({ ...guardianForm, first_name: e.target.value })} placeholder="Ej: Mar\u00eda" /></Field>
-            <Field label="Apellido" required><input style={inputStyle} value={guardianForm.last_name} onChange={e => setGuardianForm({ ...guardianForm, last_name: e.target.value })} placeholder="Ej: Gonz\u00e1lez" /></Field>
+            <Field label="Nombre" required><input style={inputStyle} value={guardianForm.first_name} onChange={e => setGuardianForm({ ...guardianForm, first_name: e.target.value })} placeholder="Ej: María" /></Field>
+            <Field label="Apellido" required><input style={inputStyle} value={guardianForm.last_name} onChange={e => setGuardianForm({ ...guardianForm, last_name: e.target.value })} placeholder="Ej: González" /></Field>
             <Field label="Parentesco" required><select style={selectStyle} value={guardianRelationship} onChange={e => setGuardianRelationship(e.target.value)}>{RELATIONSHIPS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field>
-            <Field label="C\u00e9dula"><input style={inputStyle} value={guardianForm.cedula} onChange={e => setGuardianForm({ ...guardianForm, cedula: e.target.value })} placeholder="000-0000000-0" /></Field>
-            <Field label="Tel\u00e9fono Principal" required><input style={inputStyle} value={guardianForm.phone_primary} onChange={e => setGuardianForm({ ...guardianForm, phone_primary: e.target.value })} placeholder="809-000-0000" /></Field>
-            <Field label="Tel\u00e9fono Secundario"><input style={inputStyle} value={guardianForm.phone_secondary} onChange={e => setGuardianForm({ ...guardianForm, phone_secondary: e.target.value })} placeholder="809-000-0000" /></Field>
+            <Field label="Cédula"><input style={inputStyle} value={guardianForm.cedula} onChange={e => setGuardianForm({ ...guardianForm, cedula: e.target.value })} placeholder="000-0000000-0" /></Field>
+            <Field label="Teléfono Principal" required><input style={inputStyle} value={guardianForm.phone_primary} onChange={e => setGuardianForm({ ...guardianForm, phone_primary: e.target.value })} placeholder="809-000-0000" /></Field>
+            <Field label="Teléfono Secundario"><input style={inputStyle} value={guardianForm.phone_secondary} onChange={e => setGuardianForm({ ...guardianForm, phone_secondary: e.target.value })} placeholder="809-000-0000" /></Field>
             <Field label="Email" span={2}><input style={inputStyle} type="email" value={guardianForm.email} onChange={e => setGuardianForm({ ...guardianForm, email: e.target.value })} placeholder="correo@ejemplo.com" /></Field>
-            <Field label="Direcci\u00f3n" span={2}><input style={inputStyle} value={guardianForm.address} onChange={e => setGuardianForm({ ...guardianForm, address: e.target.value })} placeholder="Calle, n\u00famero..." /></Field>
+            <Field label="Dirección" span={2}><input style={inputStyle} value={guardianForm.address} onChange={e => setGuardianForm({ ...guardianForm, address: e.target.value })} placeholder="Calle, número..." /></Field>
             <Field label="Ciudad"><input style={inputStyle} value={guardianForm.city} onChange={e => setGuardianForm({ ...guardianForm, city: e.target.value })} /></Field>
             <Field label="Provincia"><input style={inputStyle} value={guardianForm.province} onChange={e => setGuardianForm({ ...guardianForm, province: e.target.value })} /></Field>
-            <Field label="Ocupaci\u00f3n"><input style={inputStyle} value={guardianForm.occupation} onChange={e => setGuardianForm({ ...guardianForm, occupation: e.target.value })} placeholder="Ej: Ingeniero" /></Field>
+            <Field label="Ocupación"><input style={inputStyle} value={guardianForm.occupation} onChange={e => setGuardianForm({ ...guardianForm, occupation: e.target.value })} placeholder="Ej: Ingeniero" /></Field>
             <Field label="Lugar de Trabajo"><input style={inputStyle} value={guardianForm.workplace} onChange={e => setGuardianForm({ ...guardianForm, workplace: e.target.value })} /></Field>
             <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: 10, paddingTop: 8 }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 14 }}>
