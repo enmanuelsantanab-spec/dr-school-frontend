@@ -97,10 +97,21 @@ const MONTHS = [
 ]
 
 function DatePicker({ value, onChange, selectStyle }) {
-  const parts = value ? value.split('-') : ['', '', '']
-  const year = parts[0] || ''
-  const month = parts[1] || ''
-  const day = parts[2] || ''
+  const [year, setYear] = useState('')
+  const [month, setMonth] = useState('')
+  const [day, setDay] = useState('')
+
+  // Sync from parent value (for edit mode or external changes)
+  useEffect(() => {
+    if (value && value.includes('-')) {
+      const parts = value.split('-')
+      setYear(parts[0] || '')
+      setMonth(parts[1] || '')
+      setDay(parts[2] || '')
+    } else if (!value) {
+      setYear(''); setMonth(''); setDay('')
+    }
+  }, [value])
 
   const currentYear = new Date().getFullYear()
   const years = []
@@ -110,28 +121,27 @@ function DatePicker({ value, onChange, selectStyle }) {
   const days = []
   for (let d = 1; d <= daysInMonth; d++) days.push(d)
 
-  function update(y, m, d) {
-    if (y && m && d) {
-      onChange(`${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`)
-    } else {
-      onChange('')
+  // Takes explicit params so there are no stale closures — only calls onChange when all 3 are set
+  function handleChange(newY, newM, newD) {
+    if (newY && newM && newD) {
+      onChange(`${newY}-${String(newM).padStart(2, '0')}-${String(newD).padStart(2, '0')}`)
     }
   }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr', gap: 6 }}>
       <select style={selectStyle} value={day}
-        onChange={e => update(year, month, e.target.value)}>
+        onChange={e => { const v = e.target.value; setDay(v); handleChange(year, month, v) }}>
         <option value="">Día</option>
         {days.map(d => <option key={d} value={String(d).padStart(2, '0')}>{d}</option>)}
       </select>
       <select style={selectStyle} value={month}
-        onChange={e => update(year, e.target.value, day)}>
+        onChange={e => { const v = e.target.value; setMonth(v); handleChange(year, v, day) }}>
         <option value="">Mes</option>
         {MONTHS.map((m, i) => <option key={i} value={String(i + 1).padStart(2, '0')}>{m}</option>)}
       </select>
       <select style={selectStyle} value={year}
-        onChange={e => update(e.target.value, month, day)}>
+        onChange={e => { const v = e.target.value; setYear(v); handleChange(v, month, day) }}>
         <option value="">Año</option>
         {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
       </select>
